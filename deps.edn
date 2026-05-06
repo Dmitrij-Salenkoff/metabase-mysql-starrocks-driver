@@ -1,0 +1,11 @@
+{:paths ["src" "resources"]
+
+ :deps
+ {org.clojure/clojure {:mvn/version "1.11.1"}
+  ;; Official MySQL Connector/J driver, used for StarRocks' MySQL protocol.
+  com.mysql/mysql-connector-j {:mvn/version "8.4.0"}}
+
+ :aliases
+ {:build
+  {:deps {io.github.clojure/tools.build {:mvn/version "0.9.6"}}
+   :ns-default build}}}

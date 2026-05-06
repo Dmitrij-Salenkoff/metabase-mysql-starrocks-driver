@@ -1,0 +1,40 @@
+info:
+  name: Metabase mysql-starrocks Driver
+  version: 1.0.0
+  description: mysql-starrocks driver for Metabase with multi-catalog support.
+
+driver:
+  name: mysql-starrocks
+  display-name: mysql-starrocks
+  lazy-load: true
+  parent: mysql
+  connection-properties:
+    - host
+    - merge:
+        - port
+        - default: 9030
+    - merge:
+        - dbname
+        - name: catalog
+          placeholder: default_catalog
+          display-name: Catalog
+          required: true
+          helper-text: "StarRocks catalog name (e.g., 'default_catalog' for internal, or your external catalog name like 'hive_catalog')"
+    - name: dbname
+      display-name: Database (optional)
+      required: false
+      helper-text: "Specific database within the catalog. Leave empty to see all databases."
+    - user
+    - password
+    - ssh-tunnel
+    - advanced-options-start
+    - merge:
+        - additional-options
+        - placeholder: "tinyInt1isBit=false"
+    - default-advanced-options
+
+init:
+  - step: load-namespace
+    namespace: metabase.driver.mysql-starrocks
+  - step: register-jdbc-driver
+    class: com.mysql.cj.jdbc.Driver

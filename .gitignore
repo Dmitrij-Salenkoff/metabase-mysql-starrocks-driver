@@ -1,0 +1,21 @@
+# Build output
+target/
+classes/
+
+# Clojure
+.cpcache/
+.nrepl-port
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
