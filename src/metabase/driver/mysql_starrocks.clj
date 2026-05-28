@@ -46,7 +46,8 @@
                               :datetime-diff                   true
                               :temporal-extract                true
                               :date-arithmetics                true
-                              :advanced-math-expressions       true}]
+                              :advanced-math-expressions       true
+                              :percentile-aggregations         true}]
   (defmethod driver/database-supports? [:mysql-starrocks feature] [_ _ _] supported?))
 
 ;;; +----------------------------------------------------------------------------------------------------------------+
@@ -338,6 +339,23 @@
 ;;; +----------------------------------------------------------------------------------------------------------------+
 ;;; |                                          Query Processing                                                       |
 ;;; +----------------------------------------------------------------------------------------------------------------+
+
+;;; +----------------------------------------------------------------------------------------------------------------+
+;;; |                                          Aggregations: Median / Percentile                                       |
+;;; +----------------------------------------------------------------------------------------------------------------+
+
+;; Enable the Median button in the Metabase UI for this driver.
+;; StarRocks implements ordered-set aggregates via percentile_disc(expr, fraction).
+
+(defmethod sql.qp/->honeysql [:mysql-starrocks :median]
+  [driver [_ field]]
+  ;; percentile_disc(col, 0.5) — exact median (picks an actual value from the dataset)
+  [:percentile_disc (sql.qp/->honeysql driver field) [:inline 0.5]])
+
+(defmethod sql.qp/->honeysql [:mysql-starrocks :percentile]
+  [driver [_ field p]]
+  ;; percentile_disc(col, p) — arbitrary percentile, p in [0, 1]
+  [:percentile_disc (sql.qp/->honeysql driver field) [:inline p]])
 
 ;; Use MySQL-style quoting since StarRocks is MySQL-compatible
 (defmethod sql.qp/quote-style :mysql-starrocks [_] :mysql)
